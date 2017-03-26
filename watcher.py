@@ -6,6 +6,10 @@ from soccersimulator import show_simu
 from __init__ import get_team
 import numpy as np
 
+import logging
+
+logger = logging.getLogger("simuExpe")
+
 
 class ExpeStrat(Strategy):
     def __init__(self):
@@ -26,13 +30,14 @@ class Watcher(object):
         team1.add("jexpe",self.strat)
         team2 = SoccerTeam("rien")
         team2.add("jrien",Strategy())
-        self.simu=Simulation(team1,team2,max_steps=100000)
+        self.simu=Simulation(team1,team2,max_steps=1000000000)
         self.simu.listeners+=self
-        self.nb_expe = 10
+        self.nb_expe = 15
         self.res = dict()
-        self.bestres = dict()
-        lista = np.linspace(3,10,10)
-        listb = np.linspace(3,10,10)
+        self.bestres = 0
+        self.bestcoeff =(0,0)
+        lista = np.linspace(1,20,30)
+        listb = np.linspace(1,20,30)
         self.list_params = [(x,y) for x in lista for y in listb ]
         self.i = 0
         self.but = 0
@@ -49,12 +54,13 @@ class Watcher(object):
          self.simu.state.ball.position = Vector2D(x,y)
          self.strat.a,self.strat.b = self.list_params[self.i]
          self.last = state.step
+         
      
     def update_round(self,team1,team2,state):
         if state.step>self.last+self.MAX_STEP: 
             self.simu.end_round()
     	
-    def start(self,visu=True):
+    def start(self,visu=False):
          if visu:
              show_simu(self.simu)
          else:
@@ -64,15 +70,22 @@ class Watcher(object):
               self.but+=1
         self.expe_tot+=1
         if self.expe_tot>self.nb_expe:
+            if self.i>=len(self.list_params):
+                self.simu.end_match()
+                return self.bestcoeff
             self.res[self.list_params[self.i]]= self.but*1./self.expe_tot
-            if self.but*1./self.expe_tot >=0.7:
-                self.bestres[self.list_param[self.i]] = self.but*1./self.expe_tot
-            print(self.list_params[self.i],self.res[self.list_params[self.i]])
+            
+            if self.but*1.0/self.expe_tot > self.bestres:
+                self.bestres=self.but*1./self.expe_tot
+                self.bestcoeff=self.list_params[self.i]
+                #print("les meilleurs resultats sont :", self.bestcoeff, self.bestres)
+            #print(self.list_params[self.i],self.res[self.list_params[self.i]])
+            #logger.debug("parametre %s : %f" %((str(self.list_params[self.i],self.res[self.list_params[self.i]])))
             self.i+=1
             self.but = 0
             self.expe_tot =0
-            if self.i>len(self.list_params):
-                self.simu.end_match()
+        
+        
     
 
 watcher = Watcher()
