@@ -1,8 +1,8 @@
 
-from soccersimulator.mdpsoccer import SoccerTeam, Simulation, SoccerAction
+from soccersimulator.mdpsoccer import SoccerAction
 from soccersimulator.utils import Vector2D
-from soccersimulator import settings
-from tools import MyState 
+
+
 import math
 
 class Je(object):

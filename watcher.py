@@ -3,7 +3,7 @@ from tools import MyState
 from soccersimulator.settings import *
 from soccersimulator import SoccerTeam,Strategy, Simulation,Vector2D
 from soccersimulator import show_simu
-from __init__ import get_team
+
 import numpy as np
 
 import logging
@@ -17,7 +17,6 @@ class ExpeStrat(Strategy):
         self.a = 0
         self.b = 0
     def compute_strategy(self,state,id_team,id_player):
-        mystate=MyState(state,id_team,id_player)
         return Je(MyState(state,id_team,id_player)).shoot_exp(self.a,self.b)
          
 

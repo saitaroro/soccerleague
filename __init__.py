@@ -1,6 +1,6 @@
 from strat import *
 from soccersimulator.mdpsoccer import SoccerTeam
-from soccersimulator import Strategy
+
 
 
 def get_team(numba):
